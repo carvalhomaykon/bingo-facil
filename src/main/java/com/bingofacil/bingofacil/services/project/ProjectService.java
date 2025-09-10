@@ -2,11 +2,14 @@ package com.bingofacil.bingofacil.services.project;
 
 import com.bingofacil.bingofacil.dtos.project.ProjectDTO;
 import com.bingofacil.bingofacil.model.project.Project;
+import com.bingofacil.bingofacil.model.user.User;
 import com.bingofacil.bingofacil.repositories.project.ProjectRepository;
+import com.bingofacil.bingofacil.repositories.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProjectService {
@@ -14,19 +17,23 @@ public class ProjectService {
     @Autowired
     private ProjectRepository projectRepository;
 
-    public void saveProject(Project project){
-        this.projectRepository.save(project);
-    }
+    @Autowired
+    private UserRepository userRepository;
 
     public Project createProject(ProjectDTO project){
         Project newProject = new Project(project);
-        this.saveProject(newProject);
-        return newProject;
+
+        User organizer = userRepository.findById(project.organizer())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        newProject.setOrganizer(organizer);
+
+        return projectRepository.save(newProject);
     }
 
     public Project editProject(Long id, Project project){
         Project editProject = projectRepository.findById(id).orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
-        this.saveProject(editProject);
+        this.projectRepository.save(editProject);
         return editProject;
     }
 

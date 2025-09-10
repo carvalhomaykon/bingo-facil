@@ -24,6 +24,7 @@ public class Project {
     private Integer amountAwards;
     private LocalDateTime dateAndTime;
     private String description;
+    @Column(name = "valor")
     private BigDecimal value;
 
     @Enumerated(EnumType.STRING)
@@ -40,7 +41,6 @@ public class Project {
         this.description = data.description();
         this.value = data.value();
         this.status = data.status();
-        this.organizer = data.organizer();
     }
 
 }
