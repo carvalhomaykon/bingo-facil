@@ -1,9 +1,10 @@
 package com.bingofacil.bingofacil.model.award;
 
+import com.bingofacil.bingofacil.model.card.NumberBingo;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity(name="NumberAward")
+@Entity
 @Table(name="NumberAward")
 @Getter
 @Setter
@@ -15,8 +16,13 @@ public class NumberAward {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer number;
-    private String letter;
+
+    @ManyToOne
+    @JoinColumn(name="award_id")
     private Award award;
+
+    @ManyToOne
+    @JoinColumn(name = "number_id")
+    private NumberBingo number;
 
 }

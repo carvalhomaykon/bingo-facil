@@ -3,7 +3,7 @@ package com.bingofacil.bingofacil.model.user;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity(name="address")
+@Entity
 @Table(name="address")
 @Getter
 @Setter
@@ -22,7 +22,5 @@ public class Address {
     private String neighborhood;
     private String municipality;
     private String state;
-
-    private User user;
 
 }

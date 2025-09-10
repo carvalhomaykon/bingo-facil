@@ -3,7 +3,7 @@ package com.bingofacil.bingofacil.model.award;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity(name="awards")
+@Entity
 @Table(name="awards")
 @Getter
 @Setter
@@ -17,6 +17,8 @@ public class Award {
     private Long id;
     private String name;
     private Integer amount;
+
+    @Enumerated(EnumType.STRING)
     private StyleAward styleAward;
 
 }

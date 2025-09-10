@@ -3,7 +3,7 @@ package com.bingofacil.bingofacil.model.card;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity(name="numbersCard")
+@Entity
 @Table(name="NumbersCard")
 @Getter
 @Setter
@@ -15,7 +15,13 @@ public class NumberCard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String letter;
+
+    @ManyToOne
+    @JoinColumn(name="card_id")
     private Card card;
+
+    @ManyToOne
+    @JoinColumn(name = "number_id")
+    private NumberBingo number;
 
 }

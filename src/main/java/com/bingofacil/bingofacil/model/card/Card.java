@@ -5,7 +5,7 @@ import com.bingofacil.bingofacil.model.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity(name="cards")
+@Entity
 @Table(name="cards")
 @Getter
 @Setter
@@ -17,8 +17,16 @@ public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name="project_id")
     private Project project;
+
+    @ManyToOne
+    @JoinColumn(name="user_id")
     private User user;
+
+    @Enumerated(EnumType.STRING)
     private StatusCard status;
 
 }
