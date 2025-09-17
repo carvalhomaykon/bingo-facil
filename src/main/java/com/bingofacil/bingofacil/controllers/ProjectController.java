@@ -19,7 +19,7 @@ public class ProjectController {
 
     @PostMapping
     public ResponseEntity<Project> createProject(@RequestBody ProjectDTO project){
-        Project newProject = projectService.createProject(project);
+        Project newProject = this.projectService.createProject(project);
         return new ResponseEntity<>(newProject, HttpStatus.CREATED);
     }
 
@@ -27,6 +27,24 @@ public class ProjectController {
     public ResponseEntity<List<Project>> findAllProjects(){
         List<Project> projects = this.projectService.findAllProjects();
         return new ResponseEntity<>(projects, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Project> findProjectById(@PathVariable Long id){
+        Project project = this.projectService.findProjectById(id);
+        return new ResponseEntity<>(project, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public void removeProject(@PathVariable Long id){
+        this.projectService.removeProject(id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Project> editProject(@PathVariable Long id, @RequestBody ProjectDTO project){
+        Project projectEdit = this.projectService.editProject(id, project);
+
+        return new ResponseEntity<>(projectEdit, HttpStatus.OK);
     }
 
 }

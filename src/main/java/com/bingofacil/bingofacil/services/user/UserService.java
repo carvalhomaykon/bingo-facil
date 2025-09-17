@@ -24,10 +24,19 @@ public class UserService {
         return newUser;
     }
 
-    public User editUser(Long id, User user){
-        user.setId(id);
-        this.saveUser(user);
-        return user;
+    public User editUser(Long id, UserDTO dto){
+        User user = this.userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        user.setName(dto.name());
+        user.setEmail(dto.email());
+        user.setPassword(dto.password());
+        user.setTelephone(dto.telephone());
+        user.setFirstName(dto.firstName());
+        user.setLastName(dto.lastName());
+        user.setAddress(dto.address());
+
+        return this.userRepository.save(user);
     }
 
     public void removeUser(Long id){

@@ -34,4 +34,15 @@ public class UserController {
         User user = this.userService.findUserById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    public void removeUser(@PathVariable Long id){
+        this.userService.removeUser(id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> editUser(@PathVariable Long id, @RequestBody UserDTO user){
+        User editUser = this.userService.editUser(id, user);
+        return new ResponseEntity<>(editUser, HttpStatus.OK);
+    }
 }

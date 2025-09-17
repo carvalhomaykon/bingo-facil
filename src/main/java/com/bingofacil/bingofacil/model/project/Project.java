@@ -42,5 +42,4 @@ public class Project {
         this.value = data.value();
         this.status = data.status();
     }
-
 }

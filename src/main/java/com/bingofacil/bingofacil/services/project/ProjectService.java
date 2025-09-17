@@ -31,12 +31,6 @@ public class ProjectService {
         return projectRepository.save(newProject);
     }
 
-    public Project editProject(Long id, Project project){
-        Project editProject = projectRepository.findById(id).orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
-        this.projectRepository.save(editProject);
-        return editProject;
-    }
-
     public void removeProject(Long id){
         projectRepository.deleteById(id);
     }
@@ -47,6 +41,21 @@ public class ProjectService {
 
     public List<Project> findAllProjects(){
         return projectRepository.findAll();
+    }
+
+    public Project editProject(Long id, ProjectDTO dto){
+        Project project = this.projectRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
+
+        project.setName(dto.name());
+        project.setAmountAwards(dto.amountAwards());
+        project.setDateAndTime(dto.dateAndTime());
+        project.setDescription(dto.description());
+        project.setValue(dto.value());
+        project.setStatus(dto.status());
+
+        return this.projectRepository.save(project);
+
     }
 
     //public List<Card> generateCard(int amount){}
