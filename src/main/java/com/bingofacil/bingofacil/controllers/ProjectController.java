@@ -1,6 +1,6 @@
 package com.bingofacil.bingofacil.controllers;
 
-import com.bingofacil.bingofacil.dtos.project.ProjectDTO;
+import com.bingofacil.bingofacil.dtos.ProjectDTO;
 import com.bingofacil.bingofacil.model.project.Project;
 import com.bingofacil.bingofacil.services.project.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;

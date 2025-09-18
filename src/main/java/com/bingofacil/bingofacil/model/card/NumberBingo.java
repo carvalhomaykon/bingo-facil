@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "numbers")
+@Table(name = "NumbersBingo")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,6 +18,7 @@ public class NumberBingo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "number_value")
     private Integer value; // 1–75
 
     private String letter; // B, I, N, G, O

@@ -2,6 +2,7 @@ package com.bingofacil.bingofacil.model.card;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.context.annotation.DependsOn;
 
 @Entity
 @Table(name="NumbersCard")
@@ -19,6 +20,7 @@ public class NumberCard {
     @ManyToOne
     @JoinColumn(name="card_id")
     private Card card;
+
 
     @ManyToOne
     @JoinColumn(name = "number_id")

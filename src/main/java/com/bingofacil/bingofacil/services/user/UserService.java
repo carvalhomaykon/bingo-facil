@@ -1,6 +1,6 @@
 package com.bingofacil.bingofacil.services.user;
 
-import com.bingofacil.bingofacil.dtos.project.UserDTO;
+import com.bingofacil.bingofacil.dtos.UserDTO;
 import com.bingofacil.bingofacil.model.user.User;
 import com.bingofacil.bingofacil.repositories.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

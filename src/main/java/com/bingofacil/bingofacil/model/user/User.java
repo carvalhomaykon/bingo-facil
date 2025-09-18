@@ -1,6 +1,6 @@
 package com.bingofacil.bingofacil.model.user;
 
-import com.bingofacil.bingofacil.dtos.project.UserDTO;
+import com.bingofacil.bingofacil.dtos.UserDTO;
 import jakarta.persistence.*;
 import lombok.*;
 

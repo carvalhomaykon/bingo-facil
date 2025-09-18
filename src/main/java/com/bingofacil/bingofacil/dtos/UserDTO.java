@@ -1,4 +1,4 @@
-package com.bingofacil.bingofacil.dtos.project;
+package com.bingofacil.bingofacil.dtos;
 
 import com.bingofacil.bingofacil.model.user.Address;
 

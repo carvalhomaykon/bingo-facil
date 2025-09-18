@@ -3,6 +3,7 @@ package com.bingofacil.bingofacil.model.award;
 import com.bingofacil.bingofacil.model.card.NumberBingo;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.context.annotation.DependsOn;
 
 @Entity
 @Table(name="NumberAward")

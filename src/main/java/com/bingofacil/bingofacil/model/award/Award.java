@@ -1,5 +1,7 @@
 package com.bingofacil.bingofacil.model.award;
 
+import com.bingofacil.bingofacil.dtos.AwardDTO;
+import com.bingofacil.bingofacil.model.project.Project;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +20,17 @@ public class Award {
     private String name;
     private Integer amount;
 
+    @ManyToOne
+    @JoinColumn(name="project_id")
+    private Project project;
+
     @Enumerated(EnumType.STRING)
     private StyleAward styleAward;
+
+    public Award(AwardDTO data){
+        this.name = data.name();
+        this.amount = data.amount();
+        this.styleAward = data.styleAward();
+    }
 
 }

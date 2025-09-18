@@ -1,6 +1,6 @@
 package com.bingofacil.bingofacil.services.project;
 
-import com.bingofacil.bingofacil.dtos.project.ProjectDTO;
+import com.bingofacil.bingofacil.dtos.ProjectDTO;
 import com.bingofacil.bingofacil.model.project.Project;
 import com.bingofacil.bingofacil.model.user.User;
 import com.bingofacil.bingofacil.repositories.project.ProjectRepository;
@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProjectService {
