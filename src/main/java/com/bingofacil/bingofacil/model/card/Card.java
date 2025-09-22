@@ -1,5 +1,6 @@
 package com.bingofacil.bingofacil.model.card;
 
+import com.bingofacil.bingofacil.dtos.CardDTO;
 import com.bingofacil.bingofacil.model.project.Project;
 import com.bingofacil.bingofacil.model.user.User;
 import jakarta.persistence.*;
@@ -29,4 +30,5 @@ public class Card {
     @Enumerated(EnumType.STRING)
     private StatusCard status;
 
+    public Card(CardDTO data){}
 }
