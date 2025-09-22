@@ -1,13 +1,17 @@
 package com.bingofacil.bingofacil.services.project;
 
+import com.bingofacil.bingofacil.dtos.CardDTO;
 import com.bingofacil.bingofacil.dtos.ProjectDTO;
+import com.bingofacil.bingofacil.model.card.Card;
 import com.bingofacil.bingofacil.model.project.Project;
 import com.bingofacil.bingofacil.model.user.User;
 import com.bingofacil.bingofacil.repositories.project.ProjectRepository;
 import com.bingofacil.bingofacil.repositories.user.UserRepository;
+import com.bingofacil.bingofacil.services.card.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,6 +22,9 @@ public class ProjectService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CardService cardService;
 
     public Project createProject(ProjectDTO project){
         Project newProject = new Project(project);
@@ -57,7 +64,16 @@ public class ProjectService {
 
     }
 
-    //public List<Card> generateCard(int amount){}
+    public List<Card> generateCard(int amount, CardDTO cardRequest){
+        List<Card> cards = new ArrayList<>();
+
+        for (int i = 0; i < amount; i++){
+            Card card = cardService.createCard(cardRequest);
+            cards.add(card);
+        }
+
+        return cards;
+    }
 
     //public void startBingo(){}
 

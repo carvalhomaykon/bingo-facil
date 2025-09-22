@@ -1,7 +1,10 @@
 package com.bingofacil.bingofacil.controllers;
 
+import com.bingofacil.bingofacil.dtos.CardDTO;
 import com.bingofacil.bingofacil.dtos.ProjectDTO;
+import com.bingofacil.bingofacil.model.card.Card;
 import com.bingofacil.bingofacil.model.project.Project;
+import com.bingofacil.bingofacil.services.card.CardService;
 import com.bingofacil.bingofacil.services.project.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,6 +48,13 @@ public class ProjectController {
         Project projectEdit = this.projectService.editProject(id, project);
 
         return new ResponseEntity<>(projectEdit, HttpStatus.OK);
+    }
+
+    // Rota para criar um card
+    @PostMapping("/generate-card/{amount}")
+    public ResponseEntity<List<Card>> generateCard(@PathVariable int amount, @RequestBody CardDTO requestCard){
+        List<Card> card = this.projectService.generateCard(amount, requestCard);
+        return new ResponseEntity<>(card, HttpStatus.CREATED);
     }
 
 }
