@@ -3,9 +3,14 @@ package com.bingofacil.bingofacil.services.card;
 import com.bingofacil.bingofacil.model.card.Card;
 import com.bingofacil.bingofacil.model.card.NumberBingo;
 import com.bingofacil.bingofacil.model.card.NumberCard;
+import com.bingofacil.bingofacil.model.project.Project;
+import com.bingofacil.bingofacil.model.user.User;
 import com.bingofacil.bingofacil.repositories.card.CardRepository;
 import com.bingofacil.bingofacil.repositories.card.NumberBingoRepository;
 import com.bingofacil.bingofacil.repositories.card.NumberCardRepository;
+import com.bingofacil.bingofacil.repositories.project.ProjectRepository;
+import com.bingofacil.bingofacil.repositories.user.UserRepository;
+import com.bingofacil.bingofacil.services.project.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +30,12 @@ public class NumberCardService {
 
     @Autowired
     private CardRepository cardRepository;
+
+    @Autowired
+    private ProjectRepository projectRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     // Criar um number card
     public List<NumberCard> createNumberCards(Card card){
@@ -95,6 +106,24 @@ public class NumberCardService {
         );
 
         return numberCardRepository.findAllByCardId(card.getId());
+    }
+
+    // Pegar NumberCard pelo id do projeto
+    public List<NumberCard> findNumberCardByIdProject(Long projectId){
+        Project project = projectRepository.findById(projectId).orElseThrow(
+                () -> new RuntimeException("Project not found")
+        );
+
+        return numberCardRepository.findAllByIdProject(project.getId());
+    }
+
+    // Get NumberCard pelo id do usuário
+    public List<NumberCard> findNumberCardByIdUser(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
+
+        return numberCardRepository.findAllByIdUser(user.getId());
     }
 
 }

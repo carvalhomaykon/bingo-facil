@@ -50,11 +50,4 @@ public class ProjectController {
         return new ResponseEntity<>(projectEdit, HttpStatus.OK);
     }
 
-    // Rota para criar um card
-    @PostMapping("/generate-card/{amount}")
-    public ResponseEntity<List<Card>> generateCard(@PathVariable int amount, @RequestBody CardDTO requestCard){
-        List<Card> card = this.projectService.generateCard(amount, requestCard);
-        return new ResponseEntity<>(card, HttpStatus.CREATED);
-    }
-
 }

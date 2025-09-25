@@ -64,17 +64,6 @@ public class ProjectService {
 
     }
 
-    public List<Card> generateCard(int amount, CardDTO cardRequest){
-        List<Card> cards = new ArrayList<>();
-
-        for (int i = 0; i < amount; i++){
-            Card card = cardService.createCard(cardRequest);
-            cards.add(card);
-        }
-
-        return cards;
-    }
-
     //public void startBingo(){}
 
 }

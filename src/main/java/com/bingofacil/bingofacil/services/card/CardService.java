@@ -13,6 +13,7 @@ import com.bingofacil.bingofacil.repositories.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +41,7 @@ public class CardService {
     }
 
     // Pegar todos os cards pelo id do usuário
-    public List<Card> findCardsByIduser(Long userId){
+    public List<Card> findCardsByIdUser(Long userId){
         return cardRepository.findAllByUserId(userId);
     }
 
@@ -53,7 +54,8 @@ public class CardService {
         return cardRepository.findAllByProjectId(project.getId());
     }
 
-    public Card createCard(CardDTO cardRequest){
+    public List<Card> generateCards(int amount, CardDTO cardRequest) {
+        // 1. Validar User e Project APENAS UMA VEZ antes do loop
         User user = userRepository.findById(cardRequest.user()).orElseThrow(
                 () -> new RuntimeException("Usuário não encontrado.")
         );
@@ -62,16 +64,27 @@ public class CardService {
                 () -> new RuntimeException("Projeto não encontrado.")
         );
 
-        Card newCard = new Card();
-        newCard.setUser(user);
-        newCard.setProject(project);
+        List<Card> cards = new ArrayList<>();
 
-        newCard = cardRepository.save(newCard);
+        // 2. Loop para criar a quantidade desejada de cards
+        for (int i = 0; i < amount; i++) {
+            Card newCard = new Card();
 
-        numberCardService.createNumberCards(newCard);
+            // Usar os objetos User e Project validados
+            newCard.setUser(user);
+            newCard.setProject(project);
 
-        return newCard;
+            // 3. Salvar o Card (gera o ID)
+            newCard = cardRepository.save(newCard);
 
+            // 4. Criar os números do card
+            numberCardService.createNumberCards(newCard);
+
+            cards.add(newCard);
+        }
+
+        // 5. Retornar a lista de cards gerados
+        return cards;
     }
 
 }
