@@ -1,6 +1,6 @@
 package com.bingofacil.bingofacil.model.user;
 
-import com.bingofacil.bingofacil.dtos.UserDTO;
+import com.bingofacil.bingofacil.dtos.user.UserDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,7 +20,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String username;
 
     @Column(unique = true)
     private String email;
@@ -40,7 +40,7 @@ public class User {
     private LocalDateTime updatedAt;
 
     public User(UserDTO data){
-        this.name = data.name();
+        this.username = data.username();
         this.email = data.email();
         this.password = data.password();
         this.telephone = data.telephone();

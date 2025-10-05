@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 @Service
 public class JwtService {
 
+    public static final long EXPIRY_SECONDS = 36000L;
+
     private final JwtEncoder encoder;
 
     public JwtService (JwtEncoder encoder){
@@ -20,7 +22,7 @@ public class JwtService {
 
     public String generateToken(Authentication authentication){
         Instant now = Instant.now();
-        long expiry = 36000L;
+        long expiry = EXPIRY_SECONDS;
 
         String scope = authentication
                 .getAuthorities().stream()

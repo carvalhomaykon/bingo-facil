@@ -1,9 +1,16 @@
 package com.bingofacil.bingofacil.services.user;
 
-import com.bingofacil.bingofacil.dtos.UserDTO;
+import com.bingofacil.bingofacil.dtos.LoginResponse;
+import com.bingofacil.bingofacil.dtos.user.LoginUserDTO;
+import com.bingofacil.bingofacil.dtos.user.UserDTO;
 import com.bingofacil.bingofacil.model.user.User;
 import com.bingofacil.bingofacil.repositories.user.UserRepository;
+import com.bingofacil.bingofacil.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,26 +21,39 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtService jwtService;
+
     public void saveUser(User user){
         this.userRepository.save(user);
     }
 
-    public User createUser(UserDTO user){
-        User newUser = new User(user);
-        this.saveUser(newUser);
-        return newUser;
+    public User createUser(UserDTO userDTO){
+        User newUser = new User();
+
+        newUser.setUsername(userDTO.username());
+        newUser.setEmail(userDTO.email());
+        newUser.setPassword(passwordEncoder.encode(userDTO.password())); // encode da senha
+        newUser.setTelephone(userDTO.telephone());
+        newUser.setAddress(userDTO.address());
+
+        return this.userRepository.save(newUser);
     }
 
     public User editUser(Long id, UserDTO dto){
         User user = this.userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        user.setName(dto.name());
+        user.setUsername(dto.username());
         user.setEmail(dto.email());
         user.setPassword(dto.password());
         user.setTelephone(dto.telephone());
-        user.setFirstName(dto.firstName());
-        user.setLastName(dto.lastName());
         user.setAddress(dto.address());
 
         return this.userRepository.save(user);
@@ -51,4 +71,17 @@ public class UserService {
         return this.userRepository.findById(id).orElse(null);
     }
 
+    public LoginResponse authenticate(LoginUserDTO input){
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        input.email(),
+                        input.password()
+                )
+        );
+
+        String jwtToken = jwtService.generateToken(authentication);
+        long expiresIn = JwtService.EXPIRY_SECONDS;
+
+        return new LoginResponse(jwtToken, expiresIn);
+    }
 }
