@@ -55,21 +55,21 @@ Ele será responsável por interagir com a API REST, exibir informações dos bi
 
 ## 🗂 Estrutura do Projeto
 
-bingofacil/
-├── src/
-│ ├── main/
-│ │ ├── java/com/bingofacil/bingofacil/
-│ │ │ ├── config/ # Configuração do JWT e segurança
-│ │ │ ├── controllers/ # Controladores REST
-│ │ │ ├── dtos/ # Objetos de transferência de dados
-│ │ │ ├── infra/ # Infraestrutura e suporte
-│ │ │ ├── model/ # Entidades JPA
-│ │ │ ├── repositories/ # Interfaces de acesso ao banco
-│ │ │ ├── security/ # Configuração de autenticação JWT
-│ │ │ └── services/ # Regras de negócio
-│ │ └── resources/
-│ │ └── application.properties
-└── pom.xml
+bingofacil/  
+├── src/  
+│ ├── main/  
+│ │ ├── java/com/bingofacil/bingofacil/  
+│ │ │ ├── config/ # Configuração do JWT e segurança  
+│ │ │ ├── controllers/ # Controladores REST  
+│ │ │ ├── dtos/ # Objetos de transferência de dados  
+│ │ │ ├── infra/ # Infraestrutura e suporte  
+│ │ │ ├── model/ # Entidades JPA  
+│ │ │ ├── repositories/ # Interfaces de acesso ao banco  
+│ │ │ ├── security/ # Configuração de autenticação JWT  
+│ │ │ └── services/ # Regras de negócio  
+│ │ └── resources/  
+│ │ └── application.properties  
+└── pom.xml  
 
 ---
 
