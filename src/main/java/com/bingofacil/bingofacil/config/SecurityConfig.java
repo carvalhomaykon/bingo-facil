@@ -51,6 +51,7 @@ public class SecurityConfig {
                         auth -> auth
                                 .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                                .requestMatchers("/projects/**").authenticated()
 
                                 .anyRequest().authenticated()
                 )
