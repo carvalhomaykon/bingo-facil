@@ -35,12 +35,24 @@ public class UserService {
     }
 
     public User createUser(UserDTO userDTO){
-        User newUser = new User();
 
+        if (userRepository.findByEmail(userDTO.email()).isPresent()){
+            throw new IllegalArgumentException("Email já cadastrado");
+        }
+
+        if (userRepository.findByUsername(userDTO.username()).isPresent()){
+            throw new IllegalArgumentException("Nome usuário já cadastrado");
+        }
+
+        if (userRepository.findByTelephone(userDTO.telephone()).isPresent()){
+            throw new IllegalArgumentException("Número de telefone já cadastrado");
+        }
+
+        User newUser = new User();
         newUser.setUsername(userDTO.username());
         newUser.setEmail(userDTO.email());
-        newUser.setPassword(passwordEncoder.encode(userDTO.password())); // encode da senha
         newUser.setTelephone(userDTO.telephone());
+        newUser.setPassword(passwordEncoder.encode(userDTO.password())); // encode da senha
         newUser.setAddress(userDTO.address());
 
         return this.userRepository.save(newUser);
