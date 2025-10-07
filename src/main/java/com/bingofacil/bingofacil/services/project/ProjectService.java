@@ -1,8 +1,6 @@
 package com.bingofacil.bingofacil.services.project;
 
-import com.bingofacil.bingofacil.dtos.CardDTO;
 import com.bingofacil.bingofacil.dtos.ProjectDTO;
-import com.bingofacil.bingofacil.model.card.Card;
 import com.bingofacil.bingofacil.model.project.Project;
 import com.bingofacil.bingofacil.model.user.User;
 import com.bingofacil.bingofacil.repositories.project.ProjectRepository;
@@ -11,7 +9,7 @@ import com.bingofacil.bingofacil.services.card.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -26,11 +24,14 @@ public class ProjectService {
     @Autowired
     private CardService cardService;
 
-    public Project createProject(ProjectDTO project){
-        Project newProject = new Project(project);
+    public Project createProject(ProjectDTO project, Principal principal){
+        String emailLogado = principal.getName();
 
-        User organizer = userRepository.findById(project.organizer())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        User organizer = userRepository.findByEmail(emailLogado).orElseThrow(
+                () -> new RuntimeException("Email não encontrado")
+        );
+
+        Project newProject = new Project(project);
 
         newProject.setOrganizer(organizer);
 
@@ -45,8 +46,14 @@ public class ProjectService {
         return projectRepository.findById(id).orElse(null);
     }
 
-    public List<Project> findAllProjects(){
-        return projectRepository.findAll();
+    public List<Project> findAllProjects(Principal principal){
+        String emailLogado = principal.getName();
+
+        User user = userRepository.findByEmail(emailLogado).orElseThrow(
+                () -> new RuntimeException("Email não encontrado.")
+        );
+
+        return projectRepository.findAllByOrganizerId(user.getId());
     }
 
     public Project editProject(Long id, ProjectDTO dto){

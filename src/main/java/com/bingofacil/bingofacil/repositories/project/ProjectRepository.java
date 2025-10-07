@@ -3,5 +3,8 @@ package com.bingofacil.bingofacil.repositories.project;
 import com.bingofacil.bingofacil.model.project.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface ProjectRepository extends JpaRepository<Project, Long> {
+    List<Project> findAllByOrganizerId(Long userId);
 }
