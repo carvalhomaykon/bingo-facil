@@ -18,7 +18,6 @@ public class Award {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Integer amount;
 
     @ManyToOne
     @JoinColumn(name="project_id")
@@ -29,7 +28,6 @@ public class Award {
 
     public Award(AwardDTO data){
         this.name = data.name();
-        this.amount = data.amount();
         this.styleAward = data.styleAward();
     }
 

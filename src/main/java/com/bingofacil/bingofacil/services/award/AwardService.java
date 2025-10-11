@@ -51,7 +51,6 @@ public class AwardService {
                 .orElseThrow(() -> new RuntimeException("Prêmio não encontrado"));
 
         award.setName(dto.name());
-        award.setAmount(dto.amount());
         award.setStyleAward(dto.styleAward());
 
         return this.awardRepository.save(award);
