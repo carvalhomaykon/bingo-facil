@@ -1,5 +1,7 @@
 package com.bingofacil.bingofacil.services.card;
 
+import com.bingofacil.bingofacil.dtos.CardDTO;
+import com.bingofacil.bingofacil.model.award.Award;
 import com.bingofacil.bingofacil.model.card.Card;
 import com.bingofacil.bingofacil.model.card.NumberBingo;
 import com.bingofacil.bingofacil.model.card.NumberCard;
@@ -10,13 +12,18 @@ import com.bingofacil.bingofacil.repositories.card.NumberBingoRepository;
 import com.bingofacil.bingofacil.repositories.card.NumberCardRepository;
 import com.bingofacil.bingofacil.repositories.project.ProjectRepository;
 import com.bingofacil.bingofacil.repositories.user.UserRepository;
-import com.bingofacil.bingofacil.services.project.ProjectService;
+import com.bingofacil.bingofacil.services.award.AwardService;
+import com.itextpdf.html2pdf.HtmlConverter;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -36,6 +43,9 @@ public class NumberCardService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AwardService awardService;
 
     // Criar um number card
     public List<NumberCard> createNumberCards(Card card){
@@ -58,11 +68,11 @@ public class NumberCardService {
             // Sorteia números únicos dentro da coluna
             List<Integer> nums = random.ints(start, end + 1)
                     .distinct()
-                    .limit(col == 2 ? 4: 5) // A coluna N tem somente 4 números
+                    .limit(5) // A coluna N tem somente 4 números
                     .boxed()
                     .toList();
 
-            for (int row = 0; row < (col == 2 ? 4 : 5); row++){
+            for (int row = 0; row < 5; row++){
                 NumberBingo nb = numberBingoRepository
                         .findByValueAndLetter(nums.get(row), getLetter(col))
                         .orElseThrow(() -> new RuntimeException("Número não encontrado no banco"));

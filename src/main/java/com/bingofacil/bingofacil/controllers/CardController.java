@@ -2,19 +2,27 @@ package com.bingofacil.bingofacil.controllers;
 
 import com.bingofacil.bingofacil.dtos.CardDTO;
 import com.bingofacil.bingofacil.model.card.Card;
+import com.bingofacil.bingofacil.model.card.NumberBingo;
 import com.bingofacil.bingofacil.model.card.NumberCard;
 import com.bingofacil.bingofacil.services.card.CardService;
 import com.bingofacil.bingofacil.services.card.NumberCardService;
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.html2pdf.HtmlConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/cards")
@@ -26,35 +34,24 @@ public class CardController {
     @Autowired
     private CardService cardService;
 
-    @PostMapping("/{amount}")
-    public ResponseEntity<byte[]> generateCard(@PathVariable int amount, @RequestBody CardDTO requestCard){
+    @PostMapping("/{amount}/{typeCards}")
+    public ResponseEntity<?> generateCard(@PathVariable int amount, @RequestBody CardDTO requestCard, @PathVariable String typeCards){
         try{
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            Document document = new Document(PageSize.A4);
-            PdfWriter.getInstance(document, out);
-            document.open();
+            byte[] bytes = cardService.generateCardsPDF(amount, requestCard, typeCards);
 
-            Font tituloFont = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
-            Paragraph titulo = new Paragraph("Cartela de Bingo", tituloFont);
-            titulo.setAlignment(Element.ALIGN_CENTER);
-            titulo.setSpacingAfter(20);
-            document.add(titulo);
-
-            List<Card> cards = cardService.generateCards(amount, requestCard);
-            int i = 0;
-            for (Card card : cards){
-                List<NumberCard> numberCards = numberCardService.findNumberCardByIdCard(card.getId());
-                for (NumberCard numberCard : numberCards){
-
-                }
-            }
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(bytes);
 
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
-        }
+            e.printStackTrace();
 
-        List<Card> cards = cardService.generateCards(amount, requestCard);
-        return new ResponseEntity<>(cards, HttpStatus.CREATED);
+            String errorMessage = "Erro ao gerar PDF: " + e.getMessage();
+
+            return ResponseEntity.internalServerError()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(errorMessage);
+        }
     }
 
     // Pegar card pelo id
