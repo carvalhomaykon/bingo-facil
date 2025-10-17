@@ -55,14 +55,11 @@ public class CardService {
     }
 
     public List<Card> generateCards(int amount, CardDTO cardRequest) {
-        // 1. Validar User e Project APENAS UMA VEZ antes do loop
-        User user = userRepository.findById(cardRequest.user()).orElseThrow(
-                () -> new RuntimeException("Usuário não encontrado.")
-        );
-
         Project project = projectRepository.findById(cardRequest.project()).orElseThrow(
                 () -> new RuntimeException("Projeto não encontrado.")
         );
+
+        User user = project.getOrganizer();
 
         List<Card> cards = new ArrayList<>();
 
