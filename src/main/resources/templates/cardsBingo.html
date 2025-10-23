@@ -2,25 +2,150 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bingo</title>
+
+    <!-- Fonte Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f9f9f9;
+        }
+
+        /* Cabeçalho das informações */
+        .informations {
+            background: #17578E;
+            color: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .informations h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .informations p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .informations b {
+            color: #FCC414;
+            font-weight: 600;
+        }
+
+        .informations .card-number {
+            font-size: 16px;
+            font-weight: 600;
+            background: #fff;
+            color: #17578E;
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Estilo da tabela */
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
+
         td {
-            border: 1px solid #000;
+            border: 1px solid #ccc;
             text-align: center;
-            padding: 15px;
+            padding: 18px;
             font-size: 20px;
+            transition: all 0.2s ease;
         }
+
+        td:hover {
+            background-color: #f1f1f1;
+        }
+
+        .numberValor{
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Quebra de página ao imprimir */
         .page-break {
             page-break-after: always;
+        }
+
+        .bingo-card {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 20px 0;
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .bingo-card td {
+          border: 1px solid #ccc;
+          text-align: center;
+          padding: 18px;
+          font-size: 16px;
+        }
+
+        .bingo-header td {
+          background-color: #17578E;
+          color: #fff;
+          font-weight: bold;
+          font-size: 18px;
+        }
+
+        .bingo-center {
+          background-color: #FCC414;
+          font-weight: bold;
+          color: #000;
+        }
+
+        .award-name {
+          font-size: 16px;
+          font-weight: 600;
+          text-align: center;
+          margin-top: 10px;
+          color: #17578E;
+        }
+
+        .bingo-card {
+          border: 1px solid #aaa;
+          border-radius: 6px;
         }
     </style>
 </head>
 <body>
-    {{ALL_CARDS}}
+    <div class="informations">
+        <h1>Nome do Projeto</h1>
+        <p>Será realizado em: <b>15/06/2024</b> às <b>15:50</b></p>
+        <div class="numberValor">
+            <span class="card-number">N° Cartela: 001</span>
+            <span class="card-number">Valor: R$ 15,00</span>
+        </div>
+    </div>
+
+    <div>
+        {{ALL_CARDS}}
+    </div>
+
 </body>
 </html>

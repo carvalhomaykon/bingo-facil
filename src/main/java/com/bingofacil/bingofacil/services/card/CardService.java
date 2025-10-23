@@ -169,19 +169,37 @@ public class CardService {
     public String gerarTableHtml(int[][] matriz, String nameAward) {
         StringBuilder sb = new StringBuilder();
 
-        if (nameAward != null && !nameAward.isEmpty()) {
-            sb.append("<p class=\"award-name\">").append(nameAward).append("</p>");
-        }
+        sb.append("<table class='bingo-card'>");
 
-        sb.append("<table class=\"bingo-card\">");
+        // Cabeçalho BINGO
+        sb.append("<tr class='bingo-header'>");
+        String[] letras = {"B", "I", "N", "G", "O"};
+        for (String letra : letras) {
+            sb.append("<td>").append(letra).append("</td>");
+        }
+        sb.append("</tr>");
+
+        // Corpo da tabela
         for (int[] linha : matriz) {
             sb.append("<tr>");
             for (int valor : linha) {
-                sb.append("<td>").append(valor).append("</td>");
+                if (valor == 0) {
+                    sb.append("<td class='bingo-center'>Free</td>");
+                } else {
+                    sb.append("<td>").append(valor).append("</td>");
+                }
             }
             sb.append("</tr>");
         }
+
         sb.append("</table>");
+
+        // Nome do prêmio (se houver)
+        if (nameAward != null && !nameAward.isEmpty()) {
+            sb.append("<p class='award-name'>🏆 ").append(nameAward).append("</p>");
+        }
+
         return sb.toString();
     }
+
 }
