@@ -7,23 +7,32 @@ import com.bingofacil.bingofacil.model.card.NumberCard;
 import com.bingofacil.bingofacil.model.project.Project;
 import com.bingofacil.bingofacil.model.user.User;
 import com.bingofacil.bingofacil.repositories.card.CardRepository;
-import com.bingofacil.bingofacil.repositories.card.NumberBingoRepository;
 import com.bingofacil.bingofacil.repositories.card.NumberCardRepository;
 import com.bingofacil.bingofacil.repositories.project.ProjectRepository;
 import com.bingofacil.bingofacil.repositories.user.UserRepository;
 import com.bingofacil.bingofacil.services.award.AwardService;
 import com.itextpdf.html2pdf.HtmlConverter;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.PdfMerger;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Locale;
+import java.util.UUID;
 
 @Service
 public class CardService {
@@ -31,7 +40,12 @@ public class CardService {
     private static final String TYPE_CARD_ALL_AWARDS = "1";
     private static final String PAGE_BREAK = "<br style=\"page-break-before: always;\">";
     private static final String TEMPLATE_PATH = "src/main/resources/templates/cardsBingo.html";
-    private static final String PLACEHOLDER_ALL_CARDS = "{{ALL_CARDS}}";
+    private static final String PLACEHOLDER_NUMBER_CARD = "{{NUMBER_CARD}}";
+    private static final String PLACEHOLDER_NAME_PROJECT = "{{NAME_PROJECT}}";
+    private static final String PLACEHOLDER_DATA_PROJECT = "{{DATA_PROJECT}}";
+    private static final String PLACEHOLDER_TIME_PROJECT = "{{TIME_PROJECT}}";
+    private static final String PLACEHOLDER_VALUE_PROJECT = "{{VALUE_PROJECT}}";
+    private static final String PLACEHOLDER_CODE_CARD = "{{CODE_CARD}}";
 
     @Autowired
     private CardRepository cardRepository;
@@ -70,40 +84,23 @@ public class CardService {
         return cardRepository.findAllByProjectId(project.getId());
     }
 
-    public List<Card> generateCards(int amount, CardDTO cardRequest) {
-        Project project = projectRepository.findById(cardRequest.project()).orElseThrow(
-                () -> new RuntimeException("Projeto não encontrado.")
-        );
-
-        User user = project.getOrganizer();
-
-        List<Card> cards = new ArrayList<>();
-
-        // 2. Loop para criar a quantidade desejada de cards
-        for (int i = 0; i < amount; i++) {
-            Card newCard = new Card();
-
-            // Usar os objetos User e Project validados
-            newCard.setUser(user);
-            newCard.setProject(project);
-
-            // 3. Salvar o Card (gera o ID)
-            newCard = cardRepository.save(newCard);
-
-            // 4. Criar os números do card
-            numberCardService.createNumberCards(newCard);
-
-            cards.add(newCard);
-        }
-
-        // 5. Retornar a lista de cards gerados
-        return cards;
-    }
-
-    public byte[] generateCardsPDF(int amount, CardDTO requestCard, String typeCards) throws IOException {
+    public byte[] generateCardsPDF(int amountCards, CardDTO requestCard, String typeCards) throws IOException {
         Project projectCard = projectRepository.findById(requestCard.project()).orElseThrow(
                 () -> new EntityNotFoundException("Projeto com ID " + requestCard.project() + " não encontrado.")
         );
+
+        LocalDateTime dateTime = projectCard.getDateAndTime();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        NumberFormat currencyFormat = NumberFormat.getNumberInstance(new Locale("pt", "BR"));
+
+        String dataProject = dateTime.format(dateFormatter);
+        String timeProject = dateTime.format(timeFormatter);
+
+        String nameProject = projectCard.getName();
+        String valueProject = currencyFormat.format(projectCard.getValue());
+
 
         List<Award> awardsProject = awardService.findByProjectId(projectCard.getId());
 
@@ -111,14 +108,27 @@ public class CardService {
             throw new RuntimeException("Número informado de prêmios no projeto é menor que a quantidade de prêmios cadastrados.");
         }
 
-        String htmlBase;
-        try {
-            htmlBase = Files.readString(Path.of(TEMPLATE_PATH));
-        } catch (IOException e) {
-            throw new IOException("Erro ao ler o template HTML: " + TEMPLATE_PATH, e);
+        List<byte[]> individualCardPdfs = new ArrayList<>();
+
+        for (int i = 0; i < amountCards; i++){
+            byte[] cardPdfBytes = createCardPDF(
+                    requestCard, typeCards, awardsProject,
+                    nameProject, dataProject, timeProject, valueProject
+            );
+            individualCardPdfs.add(cardPdfBytes);
         }
 
-        List<int[][]> MatrizesPresentInPDF = createMatrizesPresentInPDF(amount, requestCard);
+        return mergePdfs(individualCardPdfs);
+    }
+
+    public byte[] createCardPDF (CardDTO cardRequest, String typeCards, List<Award> awardsProject,
+                                 String nameProject, String dataProject, String timeProject, String valueProject
+                                 ) throws IOException {
+        Card card = generateCard(cardRequest);
+
+        String codeCard = card.getCodeCard();
+
+        List<int[][]> MatrizesPresentInPDF = createMatrizesPresentInCard(card);
         StringBuilder allTablesHtml = new StringBuilder();
 
         if (TYPE_CARD_ALL_AWARDS.equals(typeCards)){
@@ -136,34 +146,87 @@ public class CardService {
             }
         }
 
-        String htmlFinal = htmlBase.replace(PLACEHOLDER_ALL_CARDS, allTablesHtml.toString());
-        ByteArrayOutputStream target = new ByteArrayOutputStream();
-
-        HtmlConverter.convertToPdf(htmlFinal, target);
-
-        byte[] bytes = target.toByteArray();
-        return bytes;
-    }
-
-    public List<int[][]> createMatrizesPresentInPDF(int amount, CardDTO requestCard){
-        List<Card> cards = generateCards(amount, requestCard);
-        List<int[][]> matrizesPresentInPDF = new ArrayList<>();
-
-        for (Card card : cards){
-            int[][] matrizCard = new int[5][5];
-            List<NumberCard> numberCards = numberCardService.findNumberCardByIdCard(card.getId());
-            for (NumberCard numberCard : numberCards){
-                if (numberCard.getNumber() != null){
-                    matrizCard[numberCard.getRow()][numberCard.getColumn()] = numberCard.getNumber().getValue();
-                }
-                else{
-                    matrizCard[numberCard.getRow()][numberCard.getColumn()] = 0;
-                }
-            }
-            matrizesPresentInPDF.add(matrizCard);
+        String htmlBase;
+        try {
+            htmlBase = Files.readString(Path.of(TEMPLATE_PATH));
+        } catch (IOException e) {
+            throw new IOException("Erro ao ler o template HTML: " + TEMPLATE_PATH, e);
         }
 
-        return matrizesPresentInPDF;
+        String cardPDF = htmlBase
+                .replace(PLACEHOLDER_NUMBER_CARD, allTablesHtml.toString())
+                .replace(PLACEHOLDER_CODE_CARD, codeCard)
+                .replace(PLACEHOLDER_NAME_PROJECT ,nameProject)
+                .replace(PLACEHOLDER_DATA_PROJECT, dataProject)
+                .replace(PLACEHOLDER_TIME_PROJECT, timeProject)
+                .replace(PLACEHOLDER_VALUE_PROJECT, valueProject)
+                ;
+
+        ByteArrayOutputStream target = new ByteArrayOutputStream();
+        HtmlConverter.convertToPdf(cardPDF, target);
+
+        return target.toByteArray();
+    }
+
+    public List<int[][]> createMatrizesPresentInCard(Card card){
+        List<int[][]> matrizesPresentInCard = new ArrayList<>();
+
+        int[][] matrizCard = new int[5][5];
+        List<NumberCard> numberCards = numberCardService.findNumberCardByIdCard(card.getId());
+        for (NumberCard numberCard : numberCards){
+            if (numberCard.getNumber() != null){
+                matrizCard[numberCard.getRow()][numberCard.getColumn()] = numberCard.getNumber().getValue();
+            }
+            else{
+                matrizCard[numberCard.getRow()][numberCard.getColumn()] = 0;
+            }
+        }
+        matrizesPresentInCard.add(matrizCard);
+
+        return matrizesPresentInCard;
+    }
+
+    public Card generateCard(CardDTO cardRequest) {
+        Project project = projectRepository.findById(cardRequest.project()).orElseThrow(
+                () -> new RuntimeException("Projeto não encontrado.")
+        );
+
+        User user = project.getOrganizer();
+
+        Card newCard = new Card();
+
+        newCard.setUser(user);
+        newCard.setProject(project);
+        newCard.setCodeCard(UUID.randomUUID().toString());
+
+        newCard = cardRepository.save(newCard);
+
+        numberCardService.createNumberCards(newCard);
+
+        return newCard;
+    }
+
+    private byte[] mergePdfs(List<byte[]> pdfsToMerge) throws IOException {
+        if (pdfsToMerge == null || pdfsToMerge.isEmpty()) {
+            return new byte[0];
+        }
+
+        try (ByteArrayOutputStream mergedOutputStream = new ByteArrayOutputStream()) {
+            PdfWriter writer = new PdfWriter(mergedOutputStream);
+            try (PdfDocument pdfDocument = new PdfDocument(writer)) {
+                PdfMerger merger = new PdfMerger(pdfDocument);
+
+                for (byte[] pdfBytes : pdfsToMerge) {
+                    try (PdfDocument sourcePdf = new PdfDocument(new PdfReader(new ByteArrayInputStream(pdfBytes)))) {
+                        merger.merge(sourcePdf, 1, sourcePdf.getNumberOfPages());
+                    }
+                }
+
+                pdfDocument.close();
+            }
+
+            return mergedOutputStream.toByteArray();
+        }
     }
 
     public String gerarTableHtml(int[][] matriz, String nameAward) {
@@ -196,7 +259,7 @@ public class CardService {
 
         // Nome do prêmio (se houver)
         if (nameAward != null && !nameAward.isEmpty()) {
-            sb.append("<p class='award-name'>🏆 ").append(nameAward).append("</p>");
+            sb.append("<p class='award-name'>").append(nameAward).append("</p>");
         }
 
         return sb.toString();

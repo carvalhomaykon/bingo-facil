@@ -30,5 +30,7 @@ public class Card {
     @Enumerated(EnumType.STRING)
     private StatusCard status;
 
+    private String codeCard;
+
     public Card(CardDTO data){}
 }
