@@ -1,10 +1,12 @@
 package com.bingofacil.bingofacil.services.project;
 
 import com.bingofacil.bingofacil.dtos.ProjectDTO;
+import com.bingofacil.bingofacil.model.award.Award;
 import com.bingofacil.bingofacil.model.project.Project;
 import com.bingofacil.bingofacil.model.user.User;
 import com.bingofacil.bingofacil.repositories.project.ProjectRepository;
 import com.bingofacil.bingofacil.repositories.user.UserRepository;
+import com.bingofacil.bingofacil.services.award.AwardService;
 import com.bingofacil.bingofacil.services.card.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,9 @@ public class ProjectService {
     @Autowired
     private CardService cardService;
 
+    @Autowired
+    private AwardService awardService;
+
     public Project createProject(ProjectDTO project, Principal principal){
         String emailLogado = principal.getName();
 
@@ -39,6 +44,12 @@ public class ProjectService {
     }
 
     public void removeProject(Long id){
+        List<Award> awardsProject = awardService.findByProjectId(id);
+
+        for (Award award : awardsProject) {
+            awardService.removeAward(award.getId());
+        }
+
         projectRepository.deleteById(id);
     }
 

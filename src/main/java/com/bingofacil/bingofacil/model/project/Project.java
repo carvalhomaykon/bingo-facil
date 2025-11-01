@@ -1,12 +1,15 @@
 package com.bingofacil.bingofacil.model.project;
 
 import com.bingofacil.bingofacil.dtos.ProjectDTO;
+import com.bingofacil.bingofacil.model.award.Award;
 import com.bingofacil.bingofacil.model.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="projects")
