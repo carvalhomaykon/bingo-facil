@@ -54,42 +54,43 @@ public class CardController {
         }
     }
 
-    // Pegar card pelo id
     @GetMapping("/{idCard}")
     public ResponseEntity<Card> findCardById(@PathVariable Long idCard){
         Card card = cardService.findCardById(idCard);
         return new ResponseEntity<>(card, HttpStatus.OK);
     }
 
-    // Buscar card pelo usuário
     @GetMapping("/user/{idUser}")
     public ResponseEntity<List<Card>> findCardsByIdUser(@PathVariable Long idUser){
         List<Card> cards = cardService.findCardsByIdUser(idUser);
         return new ResponseEntity<>(cards, HttpStatus.OK);
     }
 
-    // Buscar card pelo usuário
     @GetMapping("/project/{idProject}")
     public ResponseEntity<List<Card>> findCardsByIdProject(@PathVariable Long idProject){
         List<Card> cards = cardService.findCardsByIdProject(idProject);
         return new ResponseEntity<>(cards, HttpStatus.OK);
     }
 
-    // Pegar cartela pelo id da cartela
-    @GetMapping("/{idCard}/numbers-card")
-    public ResponseEntity<List<NumberCard>> findNumberCardByIdCard(@PathVariable Long idCard){
-        List<NumberCard> numberCards = numberCardService.findNumberCardByIdCard(idCard);
+    @GetMapping("/{codeCard}/numbers-card")
+    public ResponseEntity<List<NumberCard>> findNumberCardByCodeCard(@PathVariable String codeCard){
+        List<NumberCard> numberCards = numberCardService.findNumberCardByCodeCard(codeCard);
         return new ResponseEntity<>(numberCards, HttpStatus.OK);
     }
 
-    // Get cards by id projeto
     @GetMapping("/project/{idProject}/numbers-card")
     public ResponseEntity<List<NumberCard>> findNumberCardByIdProject(@PathVariable Long idProject){
         List<NumberCard> numberCards = numberCardService.findNumberCardByIdProject(idProject);
         return new ResponseEntity<>(numberCards, HttpStatus.OK);
     }
 
-    // Get cards by id projeto
+    @GetMapping("/code-card/{codeCard}")
+    public ResponseEntity<Card> findCardByCodeCard(@PathVariable String codeCard){
+        Card card = numberCardService.findCardByCodeCard(codeCard);
+
+        return new ResponseEntity<>(card, HttpStatus.OK);
+    }
+
     @GetMapping("/user/{idUser}/numbers-card")
     public ResponseEntity<List<NumberCard>> findNumberCardByIdUser(@PathVariable Long idUser){
         List<NumberCard> numberCards = numberCardService.findNumberCardByIdProject(idUser);

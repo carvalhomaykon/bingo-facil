@@ -18,38 +18,30 @@
         }
 
         body {
-            /* Definir margens mínimas para aproveitar o espaço da folha A4 */
             margin: 20px;
-            background-color: #f9f9f9;
         }
 
-        /* --- Estilos do Cabeçalho --- */
         .informations {
             background: #17578E;
             color: #fff;
-            padding: 20px; /* Reduzido um pouco o padding */
-            border-radius: 15px;
-            margin-bottom: 20px; /* Reduzido a margem */
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            display: flex; /* Adiciona Flexbox para organizar informações e códigos */
+            display: flex;
             justify-content: space-between;
             align-items: flex-start;
         }
 
-        .info-details {
-            /* Contêiner para Nome, Data e Hora */
-            max-width: 70%;
-        }
-
         .informations h1 {
-            font-size: 26px; /* Ajustado */
+            font-size: 22px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
 
         .informations p {
-            font-size: 16px; /* Ajustado */
-            margin-bottom: 5px;
+            font-size: 14px;
+            margin-bottom: 4px;
         }
 
         .informations b {
@@ -57,80 +49,73 @@
             font-weight: 600;
         }
 
-        /* Contêiner dos Códigos e Valores (coluna lateral) */
         .numberValor {
             display: flex;
-            flex-direction: column; /* Coloca os itens em coluna */
-            align-items: flex-end; /* Alinha os blocos à direita */
-            gap: 8px; /* Espaçamento entre os blocos */
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
         }
 
         .informations .card-detail {
-            font-size: 14px; /* Ajustado para caber o UUID */
+            font-size: 12px;
             font-weight: 600;
             background: #fff;
             color: #17578E;
-            display: block; /* Garante que cada um ocupe sua própria linha */
+            display: block;
             text-align: center;
-            padding: 4px 10px; /* Ajustado o padding */
-            border-radius: 6px; /* Ajustado */
+            padding: 4px 8px;
+            border-radius: 6px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            line-height: 1.2;
-            white-space: nowrap; /* Evita quebra de linha dentro do código */
+            white-space: nowrap;
         }
 
-        /* --- Estilos das Cartelas (Principal Alteração) --- */
+        /* GRID ADAPTADO PARA CABER EM UMA PÁGINA A4 */
         .card-container {
-            /* Usa Grid para dispor as cartelas em múltiplas colunas */
             display: grid;
-            /* Configura colunas fluidas (máximo 4 colunas, mínimo 250px de largura) */
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px; /* Espaçamento entre as cartelas */
-            padding-bottom: 10px; /* Espaço no final da página */
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 8px;
+            padding: 5px;
+            page-break-inside: avoid;
+            overflow: hidden;
         }
 
         .bingo-card-wrapper {
-            /* Garante que o conteúdo de cada cartela seja isolado */
             display: block;
+            page-break-inside: avoid;
         }
 
-        /* O estilo original da sua tabela bingo-card (mantido) */
         .bingo-card {
-          width: 100%;
-          border-collapse: collapse;
-          border: 1px solid #aaa;
-          border-radius: 6px;
-          margin: 0; /* Remove margem extra */
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #aaa;
+            border-radius: 6px;
+            margin: 0;
         }
 
         .bingo-card td {
-          border: 1px solid #ccc;
-          text-align: center;
-          padding: 8px; /* Reduzido para economizar espaço */
-          font-size: 14px; /* Reduzido para economizar espaço */
+            border: 1px solid #ccc;
+            text-align: center;
+            padding: 6px;
+            font-size: 12px;
         }
 
         .bingo-header td {
-          background-color: #17578E;
-          color: #fff;
-          font-weight: bold;
-          font-size: 16px; /* Reduzido */
+            background-color: #17578E;
+            color: #fff;
+            font-weight: bold;
         }
 
         .award-name {
-          font-size: 14px;
-          font-weight: 600;
-          text-align: center;
-          margin: 5px 0; /* Ajustado */
-          color: #17578E;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            margin: 3px 0;
+            color: #17578E;
         }
 
-        /* Remove quebra de página se o objetivo é TUDO em uma página */
-        .page-break {
-            /* page-break-after: always; */ /* REMOVIDO para tentar caber tudo */
-            display: none; /* Garante quebra de página não seja inserida */
         }
     </style>
+
 </head>
 <body>
 <div class="informations">
@@ -138,11 +123,11 @@
         <h1>{{NAME_PROJECT}}</h1>
         <p>Será realizado em: <b>{{DATA_PROJECT}}</b> às <b>{{TIME_PROJECT}}</b></p>
         <p>Valor da Cartela: <b>R$ {{VALUE_PROJECT}}</b></p>
-        <p>Código: <b>R$ {{CODE_CARD}}</b></p>
+        <p>Código: <b> {{CODE_CARD}} </b></p>
     </div>
 </div>
 
-<div class="card-container">
+<div>
     {{NUMBER_CARD}}
 </div>
 

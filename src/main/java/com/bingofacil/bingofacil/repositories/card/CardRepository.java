@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface CardRepository extends JpaRepository<Card, Long> {
     List<Card> findAllByProjectId(Long projectId);
     List<Card> findAllByUserId(Long userId);
+    Optional <Card> findByCodeCard(String codeCard);
 }

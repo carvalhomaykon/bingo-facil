@@ -44,10 +44,6 @@ public class NumberCardService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private AwardService awardService;
-
-    // Criar um number card
     public List<NumberCard> createNumberCards(Card card){
         List<NumberCard> numbersCard = new ArrayList<>();
 
@@ -109,7 +105,6 @@ public class NumberCardService {
         };
     }
 
-    // Pegar NumberCard pelo id do card
     public List<NumberCard> findNumberCardByIdCard(Long cardId){
         Card card = cardRepository.findById(cardId).orElseThrow(
                 () -> new RuntimeException("Card não encontrado.")
@@ -118,7 +113,14 @@ public class NumberCardService {
         return numberCardRepository.findAllByCardId(card.getId());
     }
 
-    // Pegar NumberCard pelo id do projeto
+    public List<NumberCard> findNumberCardByCodeCard(String codeCard){
+        Card card = cardRepository.findByCodeCard(codeCard).orElseThrow(
+                () -> new RuntimeException("Card não encontrado. Revise o code card informado.")
+        );
+
+        return numberCardRepository.findAllByCardId(card.getId());
+    }
+
     public List<NumberCard> findNumberCardByIdProject(Long projectId){
         Project project = projectRepository.findById(projectId).orElseThrow(
                 () -> new RuntimeException("Project not found")
@@ -127,13 +129,10 @@ public class NumberCardService {
         return numberCardRepository.findAllByIdProject(project.getId());
     }
 
-    // Get NumberCard pelo id do usuário
-    public List<NumberCard> findNumberCardByIdUser(Long userId){
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("User not found")
+    public Card findCardByCodeCard(String codeCard){
+        return cardRepository.findByCodeCard(codeCard).orElseThrow(
+                () -> new RuntimeException("Card não encontrado. Revise o code card informado.")
         );
-
-        return numberCardRepository.findAllByIdUser(user.getId());
     }
 
 }
