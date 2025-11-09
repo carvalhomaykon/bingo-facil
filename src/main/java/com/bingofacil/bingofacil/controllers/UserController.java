@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -45,6 +46,12 @@ public class UserController {
     public ResponseEntity<User> findUserById(@PathVariable Long id){
         User user = this.userService.findUserById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @GetMapping("/username")
+    public ResponseEntity<String> findUsername(Principal principal){
+        String username = this.userService.findUsernameByPrincipal(principal);
+        return new ResponseEntity<>(username, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

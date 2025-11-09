@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -81,6 +82,16 @@ public class UserService {
 
     public User findUserById(Long id){
         return this.userRepository.findById(id).orElse(null);
+    }
+
+    public String findUsernameByPrincipal(Principal principal){
+        String emailLogado = principal.getName();
+
+        User user = this.userRepository.findByEmail(emailLogado).orElseThrow(
+                () -> new RuntimeException("Email não encontrado")
+        );
+
+        return user.getUsername();
     }
 
     public LoginResponse authenticate(LoginUserDTO input){
