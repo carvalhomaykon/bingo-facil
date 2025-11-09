@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.Principal;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -71,8 +72,14 @@ public class CardService {
     }
 
     // Pegar todos os cards pelo id do usuário
-    public List<Card> findCardsByIdUser(Long userId){
-        return cardRepository.findAllByUserId(userId);
+    public List<Card> findAllCards(Principal principal){
+        String emailLogado = principal.getName();
+
+        User user = userRepository.findByEmail(emailLogado).orElseThrow(
+                () -> new RuntimeException("Email não encontrado")
+        );
+
+        return cardRepository.findAllByUserId(user.getId());
     }
 
     // Pegar todos os cards pelo id do project
@@ -82,6 +89,23 @@ public class CardService {
         );
 
         return cardRepository.findAllByProjectId(project.getId());
+    }
+
+    public Card findCardByCodeCard(String codeCard, Principal principal){
+        Card card = cardRepository.findByCodeCard(codeCard).orElseThrow(
+                () -> new RuntimeException("Card não encontrado. Revise o code card informado.")
+        );
+
+        String emailLogado = principal.getName();
+
+        User user = userRepository.findByEmail(emailLogado).orElseThrow(
+                () -> new RuntimeException("Email não encontrado")
+        );
+
+        card.setUser(user);
+        cardRepository.save(card);
+
+        return card;
     }
 
     public byte[] generateCardsPDF(int amountCards, CardDTO requestCard, String typeCards) throws IOException {
@@ -191,11 +215,8 @@ public class CardService {
                 () -> new RuntimeException("Projeto não encontrado.")
         );
 
-        User user = project.getOrganizer();
-
         Card newCard = new Card();
 
-        newCard.setUser(user);
         newCard.setProject(project);
         newCard.setCodeCard(UUID.randomUUID().toString());
 

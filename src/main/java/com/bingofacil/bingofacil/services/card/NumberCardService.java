@@ -129,10 +129,4 @@ public class NumberCardService {
         return numberCardRepository.findAllByIdProject(project.getId());
     }
 
-    public Card findCardByCodeCard(String codeCard){
-        return cardRepository.findByCodeCard(codeCard).orElseThrow(
-                () -> new RuntimeException("Card não encontrado. Revise o code card informado.")
-        );
-    }
-
 }

@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -54,16 +55,16 @@ public class CardController {
         }
     }
 
+    @GetMapping()
+    public ResponseEntity<List<Card>> findAllCards(Principal principal){
+        List<Card> cards = cardService.findAllCards(principal);
+        return new ResponseEntity<>(cards, HttpStatus.OK);
+    }
+
     @GetMapping("/{idCard}")
     public ResponseEntity<Card> findCardById(@PathVariable Long idCard){
         Card card = cardService.findCardById(idCard);
         return new ResponseEntity<>(card, HttpStatus.OK);
-    }
-
-    @GetMapping("/user/{idUser}")
-    public ResponseEntity<List<Card>> findCardsByIdUser(@PathVariable Long idUser){
-        List<Card> cards = cardService.findCardsByIdUser(idUser);
-        return new ResponseEntity<>(cards, HttpStatus.OK);
     }
 
     @GetMapping("/project/{idProject}")
@@ -85,8 +86,8 @@ public class CardController {
     }
 
     @GetMapping("/code-card/{codeCard}")
-    public ResponseEntity<Card> findCardByCodeCard(@PathVariable String codeCard){
-        Card card = numberCardService.findCardByCodeCard(codeCard);
+    public ResponseEntity<Card> findCardByCodeCard(@PathVariable String codeCard, Principal principal){
+        Card card = cardService.findCardByCodeCard(codeCard, principal);
 
         return new ResponseEntity<>(card, HttpStatus.OK);
     }
