@@ -3,6 +3,7 @@ package com.bingofacil.bingofacil.services.user;
 import com.bingofacil.bingofacil.dtos.LoginResponse;
 import com.bingofacil.bingofacil.dtos.user.LoginUserDTO;
 import com.bingofacil.bingofacil.dtos.user.UserDTO;
+import com.bingofacil.bingofacil.exception.custom.DataIntegrityViolationException;
 import com.bingofacil.bingofacil.model.user.User;
 import com.bingofacil.bingofacil.repositories.user.UserRepository;
 import com.bingofacil.bingofacil.security.JwtService;
@@ -31,22 +32,18 @@ public class UserService {
     @Autowired
     private JwtService jwtService;
 
-    public void saveUser(User user){
-        this.userRepository.save(user);
-    }
-
     public User createUser(UserDTO userDTO){
 
         if (userRepository.findByEmail(userDTO.email()).isPresent()){
-            throw new IllegalArgumentException("Email já cadastrado");
+            throw new DataIntegrityViolationException("Email já cadastrado");
         }
 
         if (userRepository.findByUsername(userDTO.username()).isPresent()){
-            throw new IllegalArgumentException("Nome usuário já cadastrado");
+            throw new DataIntegrityViolationException("Nome usuário já cadastrado");
         }
 
         if (userRepository.findByTelephone(userDTO.telephone()).isPresent()){
-            throw new IllegalArgumentException("Número de telefone já cadastrado");
+            throw new DataIntegrityViolationException("Telefone já cadastrado.");
         }
 
         User newUser = new User();
