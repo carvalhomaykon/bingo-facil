@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
@@ -36,23 +37,15 @@ public class CardController {
     private CardService cardService;
 
     @PostMapping("/{amount}/{typeCards}")
-    public ResponseEntity<?> generateCard(@PathVariable int amount, @RequestBody CardDTO requestCard, @PathVariable String typeCards){
-        try{
-            byte[] bytes = cardService.generateCardsPDF(amount, requestCard, typeCards);
+    public ResponseEntity<?> generateCard(
+            @PathVariable int amount,
+            @RequestBody CardDTO requestCard,
+            @PathVariable String typeCards) throws IOException {
+        byte[] bytes = cardService.generateCardsPDF(amount, requestCard, typeCards);
 
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .body(bytes);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            String errorMessage = "Erro ao gerar PDF: " + e.getMessage();
-
-            return ResponseEntity.internalServerError()
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .body(errorMessage);
-        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(bytes);
     }
 
     @GetMapping()

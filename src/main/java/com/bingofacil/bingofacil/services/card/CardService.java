@@ -1,6 +1,7 @@
 package com.bingofacil.bingofacil.services.card;
 
 import com.bingofacil.bingofacil.dtos.CardDTO;
+import com.bingofacil.bingofacil.exception.custom.InvalidAwardAmountException;
 import com.bingofacil.bingofacil.model.award.Award;
 import com.bingofacil.bingofacil.model.card.Card;
 import com.bingofacil.bingofacil.model.card.NumberCard;
@@ -66,12 +67,10 @@ public class CardService {
     @Autowired
     private AwardService awardService;
 
-    // Pegar card pelo id
     public Card findCardById(Long id){
         return cardRepository.findById(id).orElse(null);
     }
 
-    // Pegar todos os cards pelo id do usuário
     public List<Card> findAllCards(Principal principal){
         String emailLogado = principal.getName();
 
@@ -82,7 +81,6 @@ public class CardService {
         return cardRepository.findAllByUserId(user.getId());
     }
 
-    // Pegar todos os cards pelo id do project
     public List<Card> findCardsByIdProject(Long projectId){
         Project project = projectRepository.findById(projectId).orElseThrow(
                 () -> new RuntimeException("Project não encontrado.")
@@ -125,11 +123,10 @@ public class CardService {
         String nameProject = projectCard.getName();
         String valueProject = currencyFormat.format(projectCard.getValue());
 
-
         List<Award> awardsProject = awardService.findByProjectId(projectCard.getId());
 
-        if (projectCard.getAmountAwards() < awardsProject.size()) {
-            throw new RuntimeException("Número informado de prêmios no projeto é menor que a quantidade de prêmios cadastrados.");
+        if (!(projectCard.getAmountAwards() == awardsProject.size())) {
+            throw new InvalidAwardAmountException("Quantidade de prêmios incompatível com o projeto.");
         }
 
         List<byte[]> individualCardPdfs = new ArrayList<>();
