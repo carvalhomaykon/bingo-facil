@@ -77,6 +77,7 @@ public class ProjectService {
         project.setDescription(dto.description());
         project.setValue(dto.value());
         project.setStatus(dto.status());
+        project.setStyleCard(dto.styleCard());
 
         return this.projectRepository.save(project);
 

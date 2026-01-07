@@ -6,6 +6,7 @@ import com.bingofacil.bingofacil.model.award.Award;
 import com.bingofacil.bingofacil.model.card.Card;
 import com.bingofacil.bingofacil.model.card.NumberCard;
 import com.bingofacil.bingofacil.model.project.Project;
+import com.bingofacil.bingofacil.model.project.StyleCard;
 import com.bingofacil.bingofacil.model.user.User;
 import com.bingofacil.bingofacil.repositories.card.CardRepository;
 import com.bingofacil.bingofacil.repositories.card.NumberCardRepository;
@@ -39,7 +40,6 @@ import java.util.UUID;
 @Service
 public class CardService {
 
-    private static final String TYPE_CARD_ALL_AWARDS = "1";
     private static final String PAGE_BREAK = "<br style=\"page-break-before: always;\">";
     private static final String TEMPLATE_PATH = "src/main/resources/templates/cardsBingo.html";
     private static final String PLACEHOLDER_NUMBER_CARD = "{{NUMBER_CARD}}";
@@ -106,7 +106,7 @@ public class CardService {
         return card;
     }
 
-    public byte[] generateCardsPDF(int amountCards, CardDTO requestCard, String typeCards) throws IOException {
+    public byte[] generateCardsPDF(int amountCards, CardDTO requestCard, StyleCard typeCards) throws IOException {
         Project projectCard = projectRepository.findById(requestCard.project()).orElseThrow(
                 () -> new EntityNotFoundException("Projeto com ID " + requestCard.project() + " não encontrado.")
         );
@@ -142,7 +142,7 @@ public class CardService {
         return mergePdfs(individualCardPdfs);
     }
 
-    public byte[] createCardPDF (CardDTO cardRequest, String typeCards, List<Award> awardsProject,
+    public byte[] createCardPDF (CardDTO cardRequest, StyleCard typeCards, List<Award> awardsProject,
                                  String nameProject, String dataProject, String timeProject, String valueProject
                                  ) throws IOException {
         Card card = generateCard(cardRequest);
@@ -152,7 +152,7 @@ public class CardService {
         List<int[][]> MatrizesPresentInPDF = createMatrizesPresentInCard(card);
         StringBuilder allTablesHtml = new StringBuilder();
 
-        if (TYPE_CARD_ALL_AWARDS.equals(typeCards)){
+        if (StyleCard.SINGLE_CARD_FOR_ALL_AWARDS.equals(typeCards)){
             for (int[][] matrizCard : MatrizesPresentInPDF){
                 String tableHtml = gerarTableHtml(matrizCard, null);
                 allTablesHtml.append(tableHtml).append(PAGE_BREAK);

@@ -33,6 +33,8 @@ public class Project {
     @Enumerated(EnumType.STRING)
     private StatusProject status;
 
+    private StyleCard styleCard;
+
     @ManyToOne
     @JoinColumn(name="organizer_id")
     private User organizer;
@@ -44,5 +46,6 @@ public class Project {
         this.description = data.description();
         this.value = data.value();
         this.status = data.status();
+        this.styleCard = data.styleCard();
     }
 }

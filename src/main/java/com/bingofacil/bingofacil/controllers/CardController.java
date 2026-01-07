@@ -4,6 +4,7 @@ import com.bingofacil.bingofacil.dtos.CardDTO;
 import com.bingofacil.bingofacil.model.card.Card;
 import com.bingofacil.bingofacil.model.card.NumberBingo;
 import com.bingofacil.bingofacil.model.card.NumberCard;
+import com.bingofacil.bingofacil.model.project.StyleCard;
 import com.bingofacil.bingofacil.services.card.CardService;
 import com.bingofacil.bingofacil.services.card.NumberCardService;
 import com.itextpdf.html2pdf.HtmlConverter;
@@ -40,7 +41,7 @@ public class CardController {
     public ResponseEntity<?> generateCard(
             @PathVariable int amount,
             @RequestBody CardDTO requestCard,
-            @PathVariable String typeCards) throws IOException {
+            @PathVariable StyleCard typeCards) throws IOException {
         byte[] bytes = cardService.generateCardsPDF(amount, requestCard, typeCards);
 
         return ResponseEntity.ok()
