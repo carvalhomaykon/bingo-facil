@@ -60,6 +60,7 @@ public class SecurityConfig {
                                 .requestMatchers("/projects/**").authenticated()
                                 .requestMatchers("/awards/**").authenticated()
                                 .requestMatchers("/cards/**").authenticated()
+                                .requestMatchers("/template-card/**").authenticated()
 
                                 .anyRequest().authenticated()
                 )
