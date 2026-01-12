@@ -7,6 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/template-card")
@@ -14,6 +22,35 @@ public class TemplateCardController {
 
     @Autowired
     private TemplateCardService templateCardService;
+
+    @Autowired
+    private S3Client s3Client;
+
+    private final String bucketName = "nome-do-seu-bucket-de-bingo";
+
+    @PostMapping("/upload")
+    public ResponseEntity<Map<String, String>> uploadToCloud(@RequestParam("file")MultipartFile file){
+        try{
+            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(fileName)
+                    .contentType(file.getContentType())
+                    .acl(ObjectCannedACL.PUBLIC_READ)
+                    .build();
+
+            s3Client.putObject(putObjectRequest, software.amazon.awssdk.core.sync.RequestBody.
+                            fromInputStream(file.getInputStream(), file.getSize()));
+
+            String fileUrl = String.format("https://%s.s3.amazonaws.com/%s", bucketName, fileName);
+
+            return ResponseEntity.ok(Map.of("url", fileUrl));
+
+        } catch (IOException e){
+            return ResponseEntity.status(500).body(Map.of("error", "Falha no upload"));
+        }
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<TemplateCard> findTemplateCardById(@PathVariable Long id){
