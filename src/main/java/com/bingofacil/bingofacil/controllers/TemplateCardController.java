@@ -4,6 +4,7 @@ import com.bingofacil.bingofacil.dtos.TemplateCardDTO;
 import com.bingofacil.bingofacil.model.card.TemplateCard;
 import com.bingofacil.bingofacil.services.card.TemplateCardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,11 @@ public class TemplateCardController {
     @Autowired
     private S3Client s3Client;
 
-    private final String bucketName = "nome-do-seu-bucket-de-bingo";
+    @Value("${aws.s3.bucket-name}")
+    private String bucketName;
+
+    @Value("${aws.s3.endpoint}")
+    private String s3Endpoint;
 
     @PostMapping("/upload")
     public ResponseEntity<Map<String, String>> uploadToCloud(@RequestParam("file")MultipartFile file){
@@ -43,7 +48,7 @@ public class TemplateCardController {
             s3Client.putObject(putObjectRequest, software.amazon.awssdk.core.sync.RequestBody.
                             fromInputStream(file.getInputStream(), file.getSize()));
 
-            String fileUrl = String.format("https://%s.s3.amazonaws.com/%s", bucketName, fileName);
+            String fileUrl = String.format("%s/%s/%s", s3Endpoint, bucketName, fileName);
 
             return ResponseEntity.ok(Map.of("url", fileUrl));
 
