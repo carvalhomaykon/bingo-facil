@@ -15,7 +15,7 @@ public class S3BucketInitializer {
     @Autowired
     private S3Client s3Client;
 
-    @Value("${aws.s3.bucket-name:bucket-bingo-facil}")
+    @Value("${aws.s3.bucket-name}")
     private String bucketName;
 
     @PostConstruct
@@ -27,7 +27,7 @@ public class S3BucketInitializer {
 
             System.out.println("S3: Bucket já existe: " + bucketName);
         } catch (S3Exception e) {
-            if (e.statusCode() == 400) {
+            if (e.statusCode() == 404) {
                 System.out.println("S3: Criando um bucket inicial: " + bucketName);
                 s3Client.createBucket(CreateBucketRequest.builder()
                         .bucket(bucketName)

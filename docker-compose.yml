@@ -9,12 +9,3 @@ services:
       - DEBUG=1
     volumes:
       - "./infra/localstack:/var/lib/localstack"
-
-  db:
-    image: mysql:8.0
-    restart: always
-    environment:
-      MYSQL_DATABASE: bingo_db
-      MYSQL_ROOT_PASSWORD: root
-    ports:
-      - "3307:3306"
