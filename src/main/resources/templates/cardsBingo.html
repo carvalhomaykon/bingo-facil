@@ -1,135 +1,53 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bingo</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
         * {
-            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box; /* Garante que bordas não alterem o X e Y */
+        }
+        @page {
+            size: 794px 1123px; /* Tamanho exato do A4 em pixels (96 DPI) */
+            margin: 0;
+        }
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            font-family: 'Helvetica', 'Arial', sans-serif;
         }
-
-        body {
-            margin: 20px;
+        .page-container {
+            position: relative;
+            width: 794px;  /* Sincronize isso com o width do canvas no Frontend */
+            height: 1123px; /* Sincronize isso com o height do canvas no Frontend */
+            page-break-after: always;
+            overflow: hidden; /* Evita gerar páginas em branco extra */
         }
-
-        .informations {
-            background: #17578E;
-            color: #fff;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .informations h1 {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .informations p {
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-
-        .informations b {
-            color: #FCC414;
-            font-weight: 600;
-        }
-
-        .numberValor {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 5px;
-        }
-
-        .informations .card-detail {
-            font-size: 12px;
-            font-weight: 600;
-            background: #fff;
-            color: #17578E;
-            display: block;
-            text-align: center;
-            padding: 4px 8px;
-            border-radius: 6px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            white-space: nowrap;
-        }
-
-        /* GRID ADAPTADO PARA CABER EM UMA PÁGINA A4 */
-        .card-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 8px;
-            padding: 5px;
-            page-break-inside: avoid;
-            overflow: hidden;
-        }
-
-        .bingo-card-wrapper {
-            display: block;
-            page-break-inside: avoid;
-        }
-
-        .bingo-card {
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .canvas-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+        .bingo-card {
             border-collapse: collapse;
-            border: 1px solid #aaa;
-            border-radius: 6px;
-            margin: 0;
-        }
-
-        .bingo-card td {
-            border: 1px solid #ccc;
             text-align: center;
-            padding: 6px;
-            font-size: 12px;
         }
-
-        .bingo-header td {
-            background-color: #17578E;
-            color: #fff;
+        .bingo-card td {
             font-weight: bold;
         }
-
-        .award-name {
-            font-size: 12px;
-            font-weight: 600;
-            text-align: center;
-            margin: 3px 0;
-            color: #17578E;
-        }
-
-        }
     </style>
-
 </head>
 <body>
-<div class="informations">
-    <div class="info-details">
-        <h1>{{NAME_PROJECT}}</h1>
-        <p>Será realizado em: <b>{{DATA_PROJECT}}</b> às <b>{{TIME_PROJECT}}</b></p>
-        <p>Valor da Cartela: <b>R$ {{VALUE_PROJECT}}</b></p>
-        <p>Código: <b> {{CODE_CARD}} </b></p>
-    </div>
-</div>
-
-<div>
-    {{NUMBER_CARD}}
-</div>
-
+{{PAGES_DATA}}
 </body>
 </html>

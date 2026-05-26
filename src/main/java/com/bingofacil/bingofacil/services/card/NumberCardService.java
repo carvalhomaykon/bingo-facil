@@ -64,25 +64,39 @@ public class NumberCardService {
             // Sorteia números únicos dentro da coluna
             List<Integer> nums = random.ints(start, end + 1)
                     .distinct()
-                    .limit(5) // A coluna N tem somente 4 números
+                    .limit(5)
                     .boxed()
                     .toList();
 
             for (int row = 0; row < 5; row++){
+                if (col == 2 && row == 2) {
+                    NumberCard free = new NumberCard();
+                    free.setCard(card);
+                    free.setNumber(null);
+                    free.setRow(2);
+                    free.setColumn(2);
+                    free.setMarked(true);
+                    numbersCard.add(free);
+                    continue;
+                }
+
                 NumberBingo nb = numberBingoRepository
                         .findByValueAndLetter(nums.get(row), getLetter(col))
                         .orElseThrow(() -> new RuntimeException("Número não encontrado no banco"));
+
                 NumberCard nc = new NumberCard();
                 nc.setCard(card);
                 nc.setNumber(nb);
                 nc.setRow(row);
                 nc.setColumn(col);
                 nc.setMarked(false);
-                numbersCard.add(numberCardRepository.save(nc));
+                numbersCard.add(nc);
+                // numbersCard.add(numberCardRepository.save(nc));
             }
         }
 
         // Centro da cartela = FREE
+        /*
         NumberCard free = new NumberCard();
         free.setCard(card);
         free.setNumber(null); // ou pode criar um NumberBingo especial "FREE"
@@ -91,7 +105,9 @@ public class NumberCardService {
         free.setMarked(true); // já marcado
         numbersCard.add(numberCardRepository.save(free));
 
-        return numbersCard;
+         */
+
+        return numberCardRepository.saveAll(numbersCard);
     }
 
     private String getLetter(int col) {

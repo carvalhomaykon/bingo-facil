@@ -15,6 +15,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 @RestController
@@ -24,36 +25,23 @@ public class TemplateCardController {
     @Autowired
     private TemplateCardService templateCardService;
 
-    @Autowired
-    private S3Client s3Client;
-
-    @Value("${aws.s3.bucket-name}")
-    private String bucketName;
-
-    @Value("${aws.s3.endpoint}")
-    private String s3Endpoint;
-
     @PostMapping("/upload")
-    public ResponseEntity<Map<String, String>> uploadToCloud(@RequestParam("file")MultipartFile file){
-        try{
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-
-            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(fileName)
-                    .contentType(file.getContentType())
-                    .acl(ObjectCannedACL.PUBLIC_READ)
-                    .build();
-
-            s3Client.putObject(putObjectRequest, software.amazon.awssdk.core.sync.RequestBody.
-                            fromInputStream(file.getInputStream(), file.getSize()));
-
-            String fileUrl = String.format("%s/%s/%s", s3Endpoint, bucketName, fileName);
-
-            return ResponseEntity.ok(Map.of("url", fileUrl));
-
-        } catch (IOException e){
+    public ResponseEntity<Map<String, String>> upload(@RequestParam("file")MultipartFile file){
+        try {
+            String url = templateCardService.uploadFile(file);
+            return ResponseEntity.ok(Map.of("url", url));
+        } catch (IOException e) {
             return ResponseEntity.status(500).body(Map.of("error", "Falha no upload"));
+        }
+    }
+
+    @PutMapping("/update-file")
+    public ResponseEntity<Map<String, String>> update(@RequestParam("file") MultipartFile file, @RequestParam("oldUrl") String oldUrl) {
+        try {
+            String url = templateCardService.updateFile(file, oldUrl);
+            return ResponseEntity.ok(Map.of("url", url));
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Falha na atualização"));
         }
     }
 
@@ -67,6 +55,10 @@ public class TemplateCardController {
     @GetMapping("/project/{idProject}")
     public ResponseEntity<TemplateCard> findTemplateCardByIdProject(@PathVariable Long idProject){
         TemplateCard templateCard = templateCardService.findTemplateCardByProjecId(idProject);
+
+        if (templateCard == null) {
+            return ResponseEntity.notFound().build();
+        }
 
         return new ResponseEntity<>(templateCard, HttpStatus.OK);
     }
