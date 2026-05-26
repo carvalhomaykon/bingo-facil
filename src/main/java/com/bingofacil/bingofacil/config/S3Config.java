@@ -26,7 +26,9 @@ public class S3Config {
                 .endpointOverride(URI.create(endpoint))
                 .forcePathStyle(true)
                 .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create("test", "test")))
+                        AwsBasicCredentials.create("admin", "password123")))
+                .region(Region.US_EAST_1)
+                .forcePathStyle(true)
                 .build();
     }
 }
