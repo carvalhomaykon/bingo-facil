@@ -18,6 +18,7 @@ public class Award {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String donor;
 
     @ManyToOne
     @JoinColumn(name="project_id")
@@ -28,6 +29,7 @@ public class Award {
 
     public Award(AwardDTO data){
         this.name = data.name();
+        this.donor = data.donor();
         this.styleAward = data.styleAward();
     }
 
