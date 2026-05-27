@@ -1,11 +1,27 @@
 services:
-  localstack:
-    image: localstack/localstack:latest
-    container_name: localstack
+  minio:
+    image: minio/minio:latest
+    container_name: minio
     ports:
-      - "4566:4566"
+      - "9000:9000"
+      - "9001:9001"
     environment:
-      - SERVICES=s3
-      - DEBUG=1
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password123
     volumes:
-      - "./infra/localstack:/var/lib/localstack"
+      - "./infra/minio_data:/data"
+    command: server /data --console-address ":9001"
+
+  db:
+    image: mysql:8.4
+    container_name: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: db_bingofacil
+      MYSQL_ROOT_PASSWORD: password123
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password123
+    volumes:
+      - "./infra/mysql_data:/var/lib/mysql"
